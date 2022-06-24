@@ -1,5 +1,8 @@
 pipeline{
   agent any
+  triggers {
+    pollSCM('*/5 * * * *')
+  }
   stages{
     stage ('Build') {
       steps {
@@ -12,9 +15,18 @@ pipeline{
         }
       }
     }
-    stage ('Deploy') {
-      steps{
-        echo "Deploy step"
+    stage ('Deployments') {
+      parallel {
+        stage('deploy to staging') {
+          steps{
+            sh "cp **/target/*.jar /home/victor/"
+          }
+        }
+        stage('deploy to install') {
+          steps{
+            sh "cp **/target/*.jar /storage/Install/"
+          }
+        }
       }
     }
   }
