@@ -19,12 +19,12 @@ pipeline{
       parallel {
         stage('deploy to staging') {
           steps{
-            sh "cp **/target/*.jar /home/victor/"
+            sh "cp target/*.jar /home/victor/"
           }
         }
         stage('deploy to install') {
           steps{
-            sh "cp **/target/*.jar /storage/Install/"
+            sh "cp target/*.jar /storage/Install/"
           }
         }
       }
