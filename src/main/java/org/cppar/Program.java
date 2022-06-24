@@ -16,25 +16,49 @@ import java.util.Objects;
 
 public class Program {
   /**
-   * list directories from path tree copy
+   * list directories from path tree copy.
    */
   private final List<Path> listDirectories = new ArrayList<>();
   /**
-   * map show source and destination copy files
+   * map show source and destination copy files.
    */
   private final Map<Path, Path> map = new LinkedHashMap<>();
   /**
-   * Iterator to iter on map
+   * Iterator to iter on map.
    */
   private final Iterator<Map.Entry<Path, Path>> iterator;
+  /**
+   * count of active threads.
+   */
   private int activeThreads = 0;
+  /**
+   * count of all possible active threads.
+   */
   private final int countThreads;
+  /**
+   * move or copy files.
+   */
   private final boolean move;
+  /**
+   * Copy options on work.
+   */
   private CopyOption co;
 
-  public Program(final boolean move, final boolean update, final boolean force,
-                 final int count, final List<Path> sources, final Path destination) {
-    this.move = move;
+  /**
+   * @param moveFile    or copy files
+   * @param update      if exist file rewrite them
+   * @param force       do not answer just do it
+   * @param count       count possible threads
+   * @param sources     directory
+   * @param destination directory
+   */
+  public Program(final boolean moveFile,
+                 final boolean update,
+                 final boolean force,
+                 final int count,
+                 final List<Path> sources,
+                 final Path destination) {
+    this.move = moveFile;
     this.countThreads = count;
     co = StandardCopyOption.COPY_ATTRIBUTES;
     if (update || force || move) {
@@ -47,11 +71,13 @@ public class Program {
   }
 
   /**
-   * function to scan all folder files
-   * @param source directory or file
+   * function to scan all folder files.
+   *
+   * @param source      directory or file
    * @param destination directory
    */
-  private void addFilesAndCreateFolders(Path source, Path destination) {
+  private void addFilesAndCreateFolders(final Path source,
+                                        final Path destination) {
     String name = source.getFileName().toString();
     String nameDest = destination + "/" + name;
     Path pathDest = Paths.get(nameDest);
@@ -72,7 +98,7 @@ public class Program {
   }
 
   /**
-   * Main function on program
+   * Main function on program.
    */
   public void work() {
     Thread[] threads = new Thread[this.countThreads];
@@ -92,7 +118,9 @@ public class Program {
           Map.Entry<Path, Path> entry = iterator.next();
           iterator.remove();
           source = entry.getKey();
-          destination = Paths.get(entry.getValue() + "/" + source.getFileName());
+          destination = Paths.get(
+                  entry.getValue() + "/"
+                          + source.getFileName());
         } else {
           activeThreads -= 1;
           if (activeThreads == 0) {
@@ -101,11 +129,16 @@ public class Program {
                 Path path = listDirectories.remove(listDirectories.size() - 1);
                 //Перевірка чи тека є пустою і спроба її видалити
                 try {
-                  if (Objects.requireNonNull(new File(path.toString()).listFiles()).length == 0 && Files.deleteIfExists(path)) {
+                  if (Objects.requireNonNull(
+                          new File(path.toString())
+                                  .listFiles())
+                          .length == 0
+                          && Files.deleteIfExists(path)) {
                     System.out.println("Видалення теки: " + path);
                   }
                 } catch (IOException e) {
-                  System.out.println("Помилка видалення теки: " + path + ". " + e);
+                  System.out.println("Помилка видалення теки: "
+                          + path + ". " + e);
                 }
               }
             }
@@ -126,6 +159,9 @@ public class Program {
     }
   }
 
+  /**
+   * @param args from arguments commandline
+   */
   public static void main(final String[] args) {
     if (args.length < 2) {
       System.out.println("Не нададо аргументів, вихід");
@@ -176,7 +212,12 @@ public class Program {
     }
     Path destination = Paths.get(args[args.length - 1]);
     System.out.println("Кількість одночасних процесів: " + count);
-    Program p = new Program(move, update, force, count, listSources, destination);
+    Program p = new Program(move,
+            update,
+            force,
+            count,
+            listSources,
+            destination);
     p.work();
   }
 }

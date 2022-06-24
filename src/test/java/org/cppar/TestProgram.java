@@ -10,8 +10,9 @@ import java.nio.file.Paths;
 public class TestProgram {
   private final String testLine = "test-line";
   private final Path p = Paths.get("src/test/resources");
-  public TestProgram(){
-    if(!Files.exists(p)){
+
+  public TestProgram() {
+    if (!Files.exists(p)) {
       try {
         Files.createDirectory(p);
       } catch (IOException e) {
@@ -19,8 +20,9 @@ public class TestProgram {
       }
     }
   }
+
   @Test
-  public void testMain_1(){
+  public void testMain_1() {
     String[] mas = {};
     boolean as = false;
     try {
@@ -31,12 +33,13 @@ public class TestProgram {
       assert as : "Повинен бути вихід з програми, якщо програма запущена без аргументів";
     }
   }
-  private void prepareFiles(Path from, Path to, Path fileNameFrom){
+
+  private void prepareFiles(Path from, Path to, Path fileNameFrom) {
     try {
-      if(!Files.exists(from)){
+      if (!Files.exists(from)) {
         Files.createDirectory(from);
       }
-      if(!Files.exists(to)){
+      if (!Files.exists(to)) {
         Files.createDirectory(to);
       }
       PrintWriter pw = new PrintWriter(fileNameFrom.toString());
@@ -48,25 +51,27 @@ public class TestProgram {
       throw new RuntimeException(e);
     }
   }
-  private void removeFiles(Path fileNameFrom, Path fileNameTo, Path from, Path to){
+
+  private void removeFiles(Path fileNameFrom, Path fileNameTo, Path from, Path to) {
     try {
-      if(Files.exists(fileNameFrom)){
+      if (Files.exists(fileNameFrom)) {
         Files.deleteIfExists(fileNameFrom);
       }
-      if(Files.exists(from)){
+      if (Files.exists(from)) {
         Files.deleteIfExists(from);
       }
-      if(Files.exists(fileNameTo)){
+      if (Files.exists(fileNameTo)) {
         Files.deleteIfExists(fileNameTo);
       }
-      if(Files.exists(to)){
+      if (Files.exists(to)) {
         Files.deleteIfExists(to);
       }
     } catch (IOException ignored) {
     }
   }
+
   @Test
-  public void testMain_2(){
+  public void testMain_2() {
     Path from = Paths.get(p + "/from2/");
     Path to = Paths.get(p + "/to2/");
     Path fileNameFrom = Paths.get(from + "/test.txt");
@@ -75,19 +80,18 @@ public class TestProgram {
     prepareFiles(from, to, fileNameFrom);
     String[] mas = {from + "/", to + "/"};
     Program.main(mas);
-    try {
-      BufferedReader br = new BufferedReader(new FileReader(fileNameTo.toString()));
+    try (BufferedReader br = new BufferedReader(new FileReader(fileNameTo.toString()))) {
       String line = br.readLine();
       assert line.equals(testLine) : "Копіювання без параметрів не вдале";
       assert br.readLine() == null : "Копіювання без параметрів не вдале";
-      br.close();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    } catch (IOException ignored) {
+
     }
     removeFiles(fileNameFrom, fileNameTo, from, to);
   }
+
   @Test
-  public void testMain_3(){
+  public void testMain_3() {
     Path from = Paths.get(p + "/from3/");
     Path to = Paths.get(p + "/to3/");
     Path fileNameFrom = Paths.get(from + "/test.txt");
@@ -96,15 +100,12 @@ public class TestProgram {
     prepareFiles(from, to, fileNameFrom);
     String[] mas = {"-m", from + "/", to + "/"};
     Program.main(mas);
-    try{
-      BufferedReader br = new BufferedReader(new FileReader(fileNameTo.toString()));
+    try (BufferedReader br = new BufferedReader(new FileReader(fileNameTo.toString()))) {
       String line = br.readLine();
       assert line.equals(testLine) : "Копіювання без параметрів не вдале";
       assert br.readLine() == null : "Копіювання без параметрів не вдале";
-      br.close();
       assert !Files.exists(fileNameFrom) : "Переміщення не вдале, вихідний файл залишився";
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    } catch (IOException ignored) {
     }
     removeFiles(fileNameFrom, fileNameTo, from, to);
   }
