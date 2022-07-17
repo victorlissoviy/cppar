@@ -6,3 +6,4 @@ testKey*
 build
 .gradle
 wrapper
+.diff
