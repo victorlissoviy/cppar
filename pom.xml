@@ -75,7 +75,7 @@
   <scm>
     <connection>scm:git:git@github.com:victorlissoviy/cppar.git</connection>
     <developerConnection>scm:git:git@github.com:victorlissoviy/cppar.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>master</tag>
     <url>https://github.com/victorlissoviy/cppar.git</url>
   </scm>
 </project>
